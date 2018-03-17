@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-MAINTAINER david <david@cninone.com>
+LABEL maintainer="david@cninone.com"
 
 ENV DEBIAN_FRONTEND noninteractive
 
