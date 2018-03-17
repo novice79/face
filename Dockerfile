@@ -1,6 +1,12 @@
 FROM ubuntu:16.04
 MAINTAINER david <david@cninone.com>
 
+ENV DEBIAN_FRONTEND noninteractive
+
+ENV LANG       en_US.UTF-8
+ENV LC_ALL	   "C.UTF-8"
+ENV LANGUAGE   en_US:en
+
 RUN apt-get update && apt-get install -y \
     sudo \
     python2.7 \
@@ -25,8 +31,16 @@ RUN apt-get update && apt-get install -y \
     python-protobuf\
     software-properties-common \
     zip \
+    libssl-dev \
+    libffi-dev \
+    python-pip \
+    python-nose \
+    python-scipy \
+    python-pandas \
+    python-openssl \
+    wget \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
+RUN python -m pip install --upgrade --force pip
 RUN git clone https://github.com/torch/distro.git ~/torch --recursive
 RUN cd ~/torch && bash install-deps && ./install.sh && \
     cd install/bin && \
@@ -68,3 +82,11 @@ RUN cd ~ && \
     cmake --build . --config Release && \
     cp dlib.so /usr/local/lib/python2.7/dist-packages && \
     rm -rf ~/dlib-tmp
+
+RUN cd ~ && git clone https://github.com/cmusatyalab/openface.git && \
+    cd ~/openface && \
+    ./models/get-models.sh && \
+    pip install numpy scipy pandas scikit-learn nose nolearn autobahn \
+    imagehash twisted protobuf appdirs pyOpenSSL cryptography service-identity matplotlib
+
+EXPOSE 22 1979    
