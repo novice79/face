@@ -42,11 +42,11 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     openssh-server \
     net-tools tzdata language-pack-en-base \
-    lsof upstart-sysv \
+    lsof initramfs-tools upstart-sysv \
     && update-initramfs -u \    
     && apt-get purge systemd -y \ 
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-    
+
 RUN mkdir -p /var/log/supervisor /var/log/nginx /var/run/sshd /data/apps   
 
 RUN useradd -ms /bin/bash david && usermod -aG sudo david
