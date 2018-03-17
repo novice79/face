@@ -114,7 +114,8 @@ RUN cd ~ && git clone https://github.com/cmusatyalab/openface.git && \
     imagehash twisted protobuf appdirs pyOpenSSL cryptography service-identity matplotlib \
     flask flask_socketio
 
-WORKDIR ~/openface
+# WORKDIR /root/openface
+WORKDIR /data/apps
 EXPOSE 22 1979    
 ADD ./svr/ /data/apps
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
