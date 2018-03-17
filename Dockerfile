@@ -25,7 +25,6 @@ RUN apt-get update && apt-get install -y \
     python-protobuf\
     software-properties-common \
     zip \
-    && ln -s /usr/bin/python2.7 /usr/bin/python \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN git clone https://github.com/torch/distro.git ~/torch --recursive
