@@ -39,7 +39,26 @@ RUN apt-get update && apt-get install -y \
     python-pandas \
     python-openssl \
     wget \
+    supervisor \
+    openssh-server \
+    net-tools tzdata language-pack-en-base \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN mkdir -p /var/log/supervisor /var/log/nginx /var/run/sshd /data/apps   
+
+RUN useradd -ms /bin/bash david && usermod -aG sudo david
+RUN echo 'david:freego' | chpasswd
+RUN echo 'root:freego_2018' | chpasswd
+# RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile \
+    && echo "/var/www *(rw,async,no_subtree_check,insecure)" >> /etc/exports \
+    && echo "export TERM=xterm" >> ~/.bashrc
+ENV TZ=Asia/Chongqing
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 RUN python -m pip install --upgrade --force pip
 RUN git clone https://github.com/torch/distro.git ~/torch --recursive
 RUN cd ~/torch && bash install-deps && ./install.sh && \
@@ -86,7 +105,13 @@ RUN cd ~ && \
 RUN cd ~ && git clone https://github.com/cmusatyalab/openface.git && \
     cd ~/openface && \
     ./models/get-models.sh && \
+    python setup.py install && \
     pip install numpy scipy pandas scikit-learn nose nolearn autobahn \
-    imagehash twisted protobuf appdirs pyOpenSSL cryptography service-identity matplotlib
+    imagehash twisted protobuf appdirs pyOpenSSL cryptography service-identity matplotlib \
+    flask flask_socketio
 
+WORKDIR ~/openface
 EXPOSE 22 1979    
+ADD ./svr/ /data/apps
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+CMD ["/usr/bin/supervisord"]
