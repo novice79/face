@@ -112,7 +112,7 @@ RUN cd ~ && git clone https://github.com/cmusatyalab/openface.git && \
     python setup.py install && \
     pip install numpy scipy pandas scikit-learn nose nolearn autobahn \
     imagehash twisted protobuf appdirs pyOpenSSL cryptography service-identity matplotlib \
-    flask flask_socketio
+    flask flask_socketio face_recognition
 
 # WORKDIR /root/openface
 WORKDIR /data/apps
